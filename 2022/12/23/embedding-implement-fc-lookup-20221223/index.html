@@ -1,0 +1,447 @@
+<!doctypehtml><html class="theme-next muse use-motion" lang=zh-CN><meta charset=UTF-8><meta content=IE=edge http-equiv=X-UA-Compatible><meta content=width=device-width,initial-scale=1,maximum-scale=1 name=viewport><meta content=#222 name=theme-color><meta content=no-transform http-equiv=Cache-Control><meta content=no-siteapp http-equiv=Cache-Control><link href=/lib/fancybox/source/jquery.fancybox.css?v=2.1.5 rel=stylesheet><link href=/lib/font-awesome/css/font-awesome.min.css?v=4.6.2 rel=stylesheet><link href=/css/main.css?v=5.1.4 rel=stylesheet><link href=/images/apple-touch-icon-next.png?v=5.1.4 rel=apple-touch-icon sizes=180x180><link href=/images/favicon-32x32-next.png?v=5.1.4 rel=icon sizes=32x32 type=image/png><link href=/images/favicon-16x16-next.png?v=5.1.4 rel=icon sizes=16x16 type=image/png><link color=#222 href=/images/logo.svg?v=5.1.4 rel=mask-icon><meta content=Debug危机系列,paddle, name=keywords><meta content=这次的debug案例来自于朋友的一个问题，Embedding层的前向和反向速度是否会随着token的增多而增加呢？本文对这个问题进行讨论。 name=description><meta content=article property=og:type><meta content=【Debug危机系列】Embedding层的千层套路 property=og:title><meta content=https://fesianxu.github.io/2022/12/23/embedding-implement-fc-lookup-20221223/index.html property=og:url><meta content=机器学习杂货铺总店 property=og:site_name><meta content=这次的debug案例来自于朋友的一个问题，Embedding层的前向和反向速度是否会随着token的增多而增加呢？本文对这个问题进行讨论。 property=og:description><meta content=zh_CN property=og:locale><meta content=https://fesianxu.github.io/2022/12/23/embedding-implement-fc-lookup-20221223/qrcode.png property=og:image><meta content=https://fesianxu.github.io/2022/12/23/embedding-implement-fc-lookup-20221223/imgs/question.png property=og:image><meta content=https://fesianxu.github.io/2022/12/23/embedding-implement-fc-lookup-20221223/imgs/Embedding_inplement.png property=og:image><meta content=https://fesianxu.github.io/2022/12/23/embedding-implement-fc-lookup-20221223/imgs/exp_a_fc_emb.png property=og:image><meta content=https://fesianxu.github.io/2022/12/23/embedding-implement-fc-lookup-20221223/imgs/exp_b_lookup_emb.png property=og:image><meta content=https://fesianxu.github.io/2022/12/23/embedding-implement-fc-lookup-20221223/imgs/grad.png property=og:image><meta content=https://fesianxu.github.io/2022/12/23/embedding-implement-fc-lookup-20221223/imgs/sparse_grad.png property=og:image><meta content=https://fesianxu.github.io/2022/12/23/embedding-implement-fc-lookup-20221223/imgs/exp_c_sparse_grad.png property=og:image><meta content=2022-12-23T15:21:06.000Z property=article:published_time><meta content=2022-12-23T16:38:45.503Z property=article:modified_time><meta content=FesianXu property=article:author><meta content=Debug危机系列 property=article:tag><meta content=paddle property=article:tag><meta content=summary name=twitter:card><meta content=https://fesianxu.github.io/2022/12/23/embedding-implement-fc-lookup-20221223/qrcode.png name=twitter:image><script id=hexo.configurations>var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };</script><link href=https://FesianXu.github.io/2022/12/23/embedding-implement-fc-lookup-20221223/ rel=canonical><title>【Debug危机系列】Embedding层的千层套路 | 机器学习杂货铺总店</title><meta content="Hexo 5.4.2" name=generator><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}</style><body itemscope itemtype=http://schema.org/WebPage lang=zh-CN><div class="container sidebar-position-left page-post-detail"><div class=headband></div><header class=header id=header itemscope itemtype=http://schema.org/WPHeader><div class=header-inner><div class=site-brand-wrapper><div class=site-meta><div class=custom-logo-site-title><a class=brand href=/ rel=start> <span class=logo-line-before><i></i></span> <span class=site-title>机器学习杂货铺总店</span> <span class=logo-line-after><i></i></span> </a></div><p class=site-subtitle></div><div class=site-nav-toggle><button><span class=btn-bar></span> <span class=btn-bar></span> <span class=btn-bar></span></button></div></div><nav class=site-nav><ul class=menu id=menu><li class="menu-item menu-item-home"><a href=/ rel=section> <i class="menu-item-icon fa fa-fw fa-home"></i> <br> Home </a><li class="menu-item menu-item-about"><a href=/about/ rel=section> <i class="menu-item-icon fa fa-fw fa-user"></i> <br> About </a><li class="menu-item menu-item-tags"><a href=/tags/ rel=section> <i class="menu-item-icon fa fa-fw fa-tags"></i> <br> Tags </a><li class="menu-item menu-item-categories"><a href=/categories/ rel=section> <i class="menu-item-icon fa fa-fw fa-th"></i> <br> Categories </a><li class="menu-item menu-item-archives"><a href=/archives/ rel=section> <i class="menu-item-icon fa fa-fw fa-archive"></i> <br> Archives </a><li class="menu-item menu-item-search"><a class=popup-trigger href=javascript:;> <i class="menu-item-icon fa fa-search fa-fw"></i> <br> Search </a></ul><div class=site-search><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class=search-icon> <i class="fa fa-search"></i> </span><span class=popup-btn-close> <i class="fa fa-times-circle"></i> </span><div class=local-search-input-wrapper><input autocomplete=off id=local-search-input placeholder=Searching... spellcheck=false></div></div><div id=local-search-result></div></div></div></nav></div></header><main class=main id=main><div class=main-inner><div class=content-wrap><div class=content id=content><div class=posts-expand id=posts><article class="post post-type-normal" itemscope itemtype=http://schema.org/Article><div class=post-block><link href=https://FesianXu.github.io/2022/12/23/embedding-implement-fc-lookup-20221223/ itemprop=mainEntityOfPage><span hidden itemprop=author itemscope itemtype=http://schema.org/Person> <meta itemprop=name> <meta itemprop=description> <meta content=/%5Bobject%20Object%5D itemprop=image> </span><span hidden itemprop=publisher itemscope itemtype=http://schema.org/Organization> <meta content=机器学习杂货铺总店 itemprop=name> </span><header class=post-header><h1 itemprop="name headline" class=post-title>【Debug危机系列】Embedding层的千层套路</h1><div class=post-meta><span class=post-time> <span class=post-meta-item-icon> <i class="fa fa-calendar-o"></i> </span> <span class=post-meta-item-text>Posted on</span> <time itemprop="dateCreated datePublished" title="Post created" datetime=2022-12-23T23:21:06+08:00> 2022-12-23 </time> </span><span class=post-category> <span class=post-meta-divider>|</span> <span class=post-meta-item-icon> <i class="fa fa-folder-o"></i> </span> <span class=post-meta-item-text>In</span> <span itemprop=about itemscope itemtype=http://schema.org/Thing> <a href=/categories/Debug%E5%8D%B1%E6%9C%BA%E7%B3%BB%E5%88%97/ itemprop=url rel=index> <span itemprop=name>Debug危机系列</span> </a> </span> </span></div></header><div class=post-body itemprop=articleBody><p>这次的debug案例来自于朋友的一个问题，Embedding层的前向和反向速度是否会随着token的增多而增加呢？本文对这个问题进行讨论。 <span id=more></span><div align=right>FesianXu 20220916 at Baidu Search Team</div><h1 id=前言>前言</h1><p>这次的debug案例来自于朋友的一个问题，Embedding层的前向和反向速度是否会随着token的增多而增加呢？本文对这个问题进行讨论。<strong>如有谬误请联系指出，本文遵循<a href=http://creativecommons.org/licenses/by-sa/4.0/ rel=noopener target=_blank>CC 4.0 BY-SA</a>版权协议，转载请附上原文出处链接和本声明并且联系笔者，谢谢</strong> 。<p><span class="math inline"><mjx-container class=MathJax jax=SVG><svg style="vertical-align: -0.075ex;" viewbox="0 -683 833 716" focusable=false height=1.62ex role=img width=1.885ex xmlns=http://www.w3.org/2000/svg><g fill=currentColor stroke=currentColor stroke-width=0 transform=scale(1,-1)><g data-mml-node=math><g data-mml-node=mi><path d="M46 676Q46 679 51 683H781Q786 679 786 676Q786 674 617 326T444 -26Q439 -33 416 -33T388 -26Q385 -22 216 326T46 676ZM697 596Q697 597 445 597T193 596Q195 591 319 336T445 80L697 596Z" data-c=2207 /></g></g></g></svg></mjx-container></span> 联系方式：<p><strong>e-mail</strong>: FesianXu@gmail.com<p><strong>github</strong>: https://github.com/FesianXu<p><strong>知乎专栏</strong>: <a href=https://zhuanlan.zhihu.com/c_1265262560611299328 rel=noopener target=_blank>计算机视觉/计算机图形理论与应用</a><p><strong>微信公众号</strong>： 机器学习杂货铺3号店<p><img src=/2022/12/23/embedding-implement-fc-lookup-20221223/qrcode.png><hr><p>前几天土豆收到朋友的一个问题，问题内容如下图所示。这个问题理解起来不难，对于一个Embedding层来说，token的数量会影响前向和反向的速度吗？我们接下来看看土豆的分析和一些试验。<p><img src=/2022/12/23/embedding-implement-fc-lookup-20221223/imgs/question.png><p>这个问题从直观上看，Embedding层的前向和反向过程是不会收到token数量的影响的，除非token实在太多导致内存占用太大，不断地出现缺页异常导致换页，从而影响访存速度。问题中有1000w个token，按照维度768，float32类型计算，也就30多G内存，对于服务器而言不算太多。而Embedding层我们都知道，可以通过两种方式实现，如Fig 1. 所示，通常来说我们可以考虑采用对<code>Lookup Table</code>查表的方式，将ID对应的某一行取出就得到了该ID的Embedding。还可以将这个ID转化为one-hot编码向量，矩阵乘以Embedding参数矩阵后，也可以得到该ID的Embedding。<p>对于查表的方式得到的Embedding，由于整个过程只需要对ID对应的某一行进行检索，因此计算复杂度是<span class="math inline"><mjx-container class=MathJax jax=SVG><svg style="vertical-align: -0.566ex;" viewbox="0 -750 2074 1000" focusable=false height=2.262ex role=img width=4.692ex xmlns=http://www.w3.org/2000/svg><g fill=currentColor stroke=currentColor stroke-width=0 transform=scale(1,-1)><g data-mml-node=math><g data-mjx-texclass=ORD data-mml-node=TeXAtom><g data-mml-node=mi><path d="M308 428Q289 428 289 438Q289 457 318 508T378 593Q417 638 475 671T599 705Q688 705 732 643T777 483Q777 380 733 285T620 123T464 18T293 -22Q188 -22 123 51T58 245Q58 327 87 403T159 533T249 626T333 685T388 705Q404 705 404 693Q404 674 363 649Q333 632 304 606T239 537T181 429T158 290Q158 179 214 114T364 48Q489 48 583 165T677 438Q677 473 670 505T648 568T601 617T528 636Q518 636 513 635Q486 629 460 600T419 544T392 490Q383 470 372 459Q341 430 308 428Z" data-c=4F /></g></g><g data-mml-node=mo transform=translate(796,0)><path d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z" data-c=28 /></g><g data-mml-node=mn transform=translate(1185,0)><path d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z" data-c=31 /></g><g data-mml-node=mo transform=translate(1685,0)><path d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z" data-c=29 /></g></g></g></svg></mjx-container></span>，理论上说不会受到token数量增加带来的影响。对于查表而言，反向过程类似于前向过程，同样计算复杂度是<span class="math inline"><mjx-container class=MathJax jax=SVG><svg style="vertical-align: -0.566ex;" viewbox="0 -750 2074 1000" focusable=false height=2.262ex role=img width=4.692ex xmlns=http://www.w3.org/2000/svg><g fill=currentColor stroke=currentColor stroke-width=0 transform=scale(1,-1)><g data-mml-node=math><g data-mjx-texclass=ORD data-mml-node=TeXAtom><g data-mml-node=mi><path d="M308 428Q289 428 289 438Q289 457 318 508T378 593Q417 638 475 671T599 705Q688 705 732 643T777 483Q777 380 733 285T620 123T464 18T293 -22Q188 -22 123 51T58 245Q58 327 87 403T159 533T249 626T333 685T388 705Q404 705 404 693Q404 674 363 649Q333 632 304 606T239 537T181 429T158 290Q158 179 214 114T364 48Q489 48 583 165T677 438Q677 473 670 505T648 568T601 617T528 636Q518 636 513 635Q486 629 460 600T419 544T392 490Q383 470 372 459Q341 430 308 428Z" data-c=4F /></g></g><g data-mml-node=mo transform=translate(796,0)><path d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z" data-c=28 /></g><g data-mml-node=mn transform=translate(1185,0)><path d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z" data-c=31 /></g><g data-mml-node=mo transform=translate(1685,0)><path d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z" data-c=29 /></g></g></g></svg></mjx-container></span>。后者由于通过矩阵乘法实现，one-hot向量中极为稀疏，仅有一个值为1，其他都为0，在计算前向和反向过程的时候同样会对这些无效的0进行计算，因此计算复杂度会随着token的增加而增加，复杂度为<span class="math inline"><mjx-container class=MathJax jax=SVG><svg style="vertical-align: -0.566ex;" viewbox="0 -750 2174 1000" focusable=false height=2.262ex role=img width=4.919ex xmlns=http://www.w3.org/2000/svg><g fill=currentColor stroke=currentColor stroke-width=0 transform=scale(1,-1)><g data-mml-node=math><g data-mjx-texclass=ORD data-mml-node=TeXAtom><g data-mml-node=mi><path d="M308 428Q289 428 289 438Q289 457 318 508T378 593Q417 638 475 671T599 705Q688 705 732 643T777 483Q777 380 733 285T620 123T464 18T293 -22Q188 -22 123 51T58 245Q58 327 87 403T159 533T249 626T333 685T388 705Q404 705 404 693Q404 674 363 649Q333 632 304 606T239 537T181 429T158 290Q158 179 214 114T364 48Q489 48 583 165T677 438Q677 473 670 505T648 568T601 617T528 636Q518 636 513 635Q486 629 460 600T419 544T392 490Q383 470 372 459Q341 430 308 428Z" data-c=4F /></g></g><g data-mml-node=mo transform=translate(796,0)><path d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z" data-c=28 /></g><g data-mml-node=mi transform=translate(1185,0)><path d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z" data-c=1D45B /></g><g data-mml-node=mo transform=translate(1785,0)><path d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z" data-c=29 /></g></g></g></svg></mjx-container></span>，其中的<span class="math inline"><mjx-container class=MathJax jax=SVG><svg style="vertical-align: -0.025ex;" viewbox="0 -442 600 453" focusable=false height=1.025ex role=img width=1.357ex xmlns=http://www.w3.org/2000/svg><g fill=currentColor stroke=currentColor stroke-width=0 transform=scale(1,-1)><g data-mml-node=math><g data-mml-node=mi><path d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z" data-c=1D45B /></g></g></g></svg></mjx-container></span>为token数量。理论上如此，在我们的工程实践中，真的如此吗？从朋友的问题上看有两种可能：<ol type=1><li>他采用FC层进行one-hot向量矩阵乘法的方式实现Embedding，但是在这种情况下，前向过程和反向过程应该会同步增加耗时，不会存在“反向过程比前向过程两倍还多”的情况。<li>他采用查表的方式实现Embedding，但是由于某种未知的框架机制，导致了题目中的情况，即计算耗时随着token数量增加而增加，并且反向传播耗时明显比前向传播耗时长。</ol><p>为了验证这两种假设，我们得进行试验，让我们开始撸代码跑实验吧~<p><img src=/2022/12/23/embedding-implement-fc-lookup-20221223/imgs/Embedding_inplement.png><div align=center><b> Fig 1. 采用lookup table查表的方式实现Embedding层 以及 通过one-hot编码向量矩阵相乘得到方式实现Embedding层。 </b></div><p>首先，我们采用FC层进行Embedding的耗时试验，代码如Append Code A. 所示，从实验中我们发现，随着token数量n的逐步增加（100 -> 5000），其总耗时time（前向+反向）呈现线性上涨（红色曲线），而前向（fwd_time）和反向（bwd_time）也呈现线性上涨，但是其反向时间/前向时间（bwd_time/fwd_time）的比例基本维持在1，因此并不会出现朋友问题中的那种情况，可以初步排除是采用FC层进行Embedding提取的可能性。<p><img src=/2022/12/23/embedding-implement-fc-lookup-20221223/imgs/exp_a_fc_emb.png><div align=center><b> Fig 2. 采用FC层进行Embedding的耗时试验。 </b></div><p>那么可以初步判断朋友是采用查表的方式实现的，我们用Appendix Code B.的代码进行验证。我们可以发现，总耗时同样随着token数量增加而线性上涨，但是前向时间却保持恒定（~0.2s），而反向耗时则随着token数量增加而线性上涨，反向耗时/前向耗时同样呈现线性上涨，这个现象满足朋友的描述。可以断定朋友是采用了类似于Appendix Code B.的代码进行模型训练的。<p><img src=/2022/12/23/embedding-implement-fc-lookup-20221223/imgs/exp_b_lookup_emb.png><div align=center><b> Fig 3. 采用查表的方式实现的Embedding耗时试验。 </b></div><p>这个和土豆之前的想法有部分矛盾，首先其前向过程的确是计算复杂度为<span class="math inline"><mjx-container class=MathJax jax=SVG><svg style="vertical-align: -0.566ex;" viewbox="0 -750 2074 1000" focusable=false height=2.262ex role=img width=4.692ex xmlns=http://www.w3.org/2000/svg><g fill=currentColor stroke=currentColor stroke-width=0 transform=scale(1,-1)><g data-mml-node=math><g data-mjx-texclass=ORD data-mml-node=TeXAtom><g data-mml-node=mi><path d="M308 428Q289 428 289 438Q289 457 318 508T378 593Q417 638 475 671T599 705Q688 705 732 643T777 483Q777 380 733 285T620 123T464 18T293 -22Q188 -22 123 51T58 245Q58 327 87 403T159 533T249 626T333 685T388 705Q404 705 404 693Q404 674 363 649Q333 632 304 606T239 537T181 429T158 290Q158 179 214 114T364 48Q489 48 583 165T677 438Q677 473 670 505T648 568T601 617T528 636Q518 636 513 635Q486 629 460 600T419 544T392 490Q383 470 372 459Q341 430 308 428Z" data-c=4F /></g></g><g data-mml-node=mo transform=translate(796,0)><path d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z" data-c=28 /></g><g data-mml-node=mn transform=translate(1185,0)><path d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z" data-c=31 /></g><g data-mml-node=mo transform=translate(1685,0)><path d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z" data-c=29 /></g></g></g></svg></mjx-container></span>的，这个也被刚才的试验验证了。但是为何其反向复杂度是会随着token数量增加而增加的呢，计算复杂度看来是<span class="math inline"><mjx-container class=MathJax jax=SVG><svg style="vertical-align: -0.566ex;" viewbox="0 -750 2174 1000" focusable=false height=2.262ex role=img width=4.919ex xmlns=http://www.w3.org/2000/svg><g fill=currentColor stroke=currentColor stroke-width=0 transform=scale(1,-1)><g data-mml-node=math><g data-mjx-texclass=ORD data-mml-node=TeXAtom><g data-mml-node=mi><path d="M308 428Q289 428 289 438Q289 457 318 508T378 593Q417 638 475 671T599 705Q688 705 732 643T777 483Q777 380 733 285T620 123T464 18T293 -22Q188 -22 123 51T58 245Q58 327 87 403T159 533T249 626T333 685T388 705Q404 705 404 693Q404 674 363 649Q333 632 304 606T239 537T181 429T158 290Q158 179 214 114T364 48Q489 48 583 165T677 438Q677 473 670 505T648 568T601 617T528 636Q518 636 513 635Q486 629 460 600T419 544T392 490Q383 470 372 459Q341 430 308 428Z" data-c=4F /></g></g><g data-mml-node=mo transform=translate(796,0)><path d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z" data-c=28 /></g><g data-mml-node=mi transform=translate(1185,0)><path d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z" data-c=1D45B /></g><g data-mml-node=mo transform=translate(1785,0)><path d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z" data-c=29 /></g></g></g></svg></mjx-container></span>，倒像是通过FC层进行反向传播的样子。我们通过以下代码，打印出通过查表方式得到的Embedding层参数的梯度，进行观察，我们发现虽然梯度只在第1,3,5,7行为非0，但是其他行虽然为0.0同样会作为一个有效的梯度，参与反向梯度传播（即便此时梯度值为0，参与了梯度反向传播也不会影响到对应ID的Embedding参数更新）。此时的反向传播过程，其实和FC层进行Embedding提取的反向传播过程是一致的，会随着token数量的增加而增加反向传播的计算复杂度<span class="math inline"><mjx-container class=MathJax jax=SVG><svg style="vertical-align: -0.566ex;" viewbox="0 -750 2174 1000" focusable=false height=2.262ex role=img width=4.919ex xmlns=http://www.w3.org/2000/svg><g fill=currentColor stroke=currentColor stroke-width=0 transform=scale(1,-1)><g data-mml-node=math><g data-mjx-texclass=ORD data-mml-node=TeXAtom><g data-mml-node=mi><path d="M308 428Q289 428 289 438Q289 457 318 508T378 593Q417 638 475 671T599 705Q688 705 732 643T777 483Q777 380 733 285T620 123T464 18T293 -22Q188 -22 123 51T58 245Q58 327 87 403T159 533T249 626T333 685T388 705Q404 705 404 693Q404 674 363 649Q333 632 304 606T239 537T181 429T158 290Q158 179 214 114T364 48Q489 48 583 165T677 438Q677 473 670 505T648 568T601 617T528 636Q518 636 513 635Q486 629 460 600T419 544T392 490Q383 470 372 459Q341 430 308 428Z" data-c=4F /></g></g><g data-mml-node=mo transform=translate(796,0)><path d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z" data-c=28 /></g><g data-mml-node=mi transform=translate(1185,0)><path d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z" data-c=1D45B /></g><g data-mml-node=mo transform=translate(1785,0)><path d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z" data-c=29 /></g></g></g></svg></mjx-container></span>，这就解释了朋友观察到的现象。<p><img src=/2022/12/23/embedding-implement-fc-lookup-20221223/imgs/grad.png><div align=center><b> Fig 4. 通过查表方式得到的Embedding的参数梯度。 </b></div><p>怎么解决呢？我们看到pytorch的<code>nn.Embedding</code>层中有个叫<code>sparse</code>的参数，这个参数如果指定为真，则表示梯度对于权重矩阵而言，以稀疏矩阵的方式进行，此时梯度是稀疏的，将只考虑有效的ID对应行的权重矩阵的梯度更新，此时那些为0.0的梯度就不会再被参与反向传播计算了，从而将计算量维持在<span class="math inline"><mjx-container class=MathJax jax=SVG><svg style="vertical-align: -0.566ex;" viewbox="0 -750 2074 1000" focusable=false height=2.262ex role=img width=4.692ex xmlns=http://www.w3.org/2000/svg><g fill=currentColor stroke=currentColor stroke-width=0 transform=scale(1,-1)><g data-mml-node=math><g data-mjx-texclass=ORD data-mml-node=TeXAtom><g data-mml-node=mi><path d="M308 428Q289 428 289 438Q289 457 318 508T378 593Q417 638 475 671T599 705Q688 705 732 643T777 483Q777 380 733 285T620 123T464 18T293 -22Q188 -22 123 51T58 245Q58 327 87 403T159 533T249 626T333 685T388 705Q404 705 404 693Q404 674 363 649Q333 632 304 606T239 537T181 429T158 290Q158 179 214 114T364 48Q489 48 583 165T677 438Q677 473 670 505T648 568T601 617T528 636Q518 636 513 635Q486 629 460 600T419 544T392 490Q383 470 372 459Q341 430 308 428Z" data-c=4F /></g></g><g data-mml-node=mo transform=translate(796,0)><path d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z" data-c=28 /></g><g data-mml-node=mn transform=translate(1185,0)><path d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z" data-c=31 /></g><g data-mml-node=mo transform=translate(1685,0)><path d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z" data-c=29 /></g></g></g></svg></mjx-container></span>。<p><img src=/2022/12/23/embedding-implement-fc-lookup-20221223/imgs/sparse_grad.png><div align=center><b> Fig 5. 在nn.Embedding层中指定sparse为真，将采用稀疏梯度进行Embedding参数的更新。 </b></div><p>让我们用Appendix Code C.的代码进行试验，我们发现此时无论是前向耗时，还是反向耗时都是<span class="math inline"><mjx-container class=MathJax jax=SVG><svg style="vertical-align: -0.566ex;" viewbox="0 -750 2074 1000" focusable=false height=2.262ex role=img width=4.692ex xmlns=http://www.w3.org/2000/svg><g fill=currentColor stroke=currentColor stroke-width=0 transform=scale(1,-1)><g data-mml-node=math><g data-mjx-texclass=ORD data-mml-node=TeXAtom><g data-mml-node=mi><path d="M308 428Q289 428 289 438Q289 457 318 508T378 593Q417 638 475 671T599 705Q688 705 732 643T777 483Q777 380 733 285T620 123T464 18T293 -22Q188 -22 123 51T58 245Q58 327 87 403T159 533T249 626T333 685T388 705Q404 705 404 693Q404 674 363 649Q333 632 304 606T239 537T181 429T158 290Q158 179 214 114T364 48Q489 48 583 165T677 438Q677 473 670 505T648 568T601 617T528 636Q518 636 513 635Q486 629 460 600T419 544T392 490Q383 470 372 459Q341 430 308 428Z" data-c=4F /></g></g><g data-mml-node=mo transform=translate(796,0)><path d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z" data-c=28 /></g><g data-mml-node=mn transform=translate(1185,0)><path d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z" data-c=31 /></g><g data-mml-node=mo transform=translate(1685,0)><path d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z" data-c=29 /></g></g></g></svg></mjx-container></span>级别的了，此时符合我们对于Embedding层的预期。<p><img src=/2022/12/23/embedding-implement-fc-lookup-20221223/imgs/exp_c_sparse_grad.png><div align=center><b> Fig 6. 采用了稀疏梯度之后，其总耗时，前向耗时和反向耗时都是常数级别的。 </b></div><h1 id=appendix>Appendix</h1><h2 id=code-a.-采用fc层进行embedding的耗时试验>Code A. 采用FC层进行Embedding的耗时试验</h2><figure class="highlight python"><table><tr><td class=gutter><pre><span class=line>1</span><br><span class=line>2</span><br><span class=line>3</span><br><span class=line>4</span><br><span class=line>5</span><br><span class=line>6</span><br><span class=line>7</span><br><span class=line>8</span><br><span class=line>9</span><br><span class=line>10</span><br><span class=line>11</span><br><span class=line>12</span><br><span class=line>13</span><br><span class=line>14</span><br><span class=line>15</span><br><span class=line>16</span><br><span class=line>17</span><br><span class=line>18</span><br><span class=line>19</span><br><span class=line>20</span><br><span class=line>21</span><br><span class=line>22</span><br><span class=line>23</span><br><span class=line>24</span><br><span class=line>25</span><br><span class=line>26</span><br><span class=line>27</span><br><span class=line>28</span><br><span class=line>29</span><br><span class=line>30</span><br><span class=line>31</span><br><span class=line>32</span><br><span class=line>33</span><br><span class=line>34</span><br><span class=line>35</span><br><span class=line>36</span><br><span class=line>37</span><br><span class=line>38</span><br><span class=line>39</span><br><span class=line>40</span><br><span class=line>41</span><br><span class=line>42</span><br><span class=line>43</span><br><span class=line>44</span><br><span class=line>45</span><br></pre><td class=code><pre><span class=line><span class=keyword>import</span> torch </span><br><span class=line><span class=keyword>import</span> torch.nn <span class=keyword>as</span> nn</span><br><span class=line><span class=keyword>from</span> torch.autograd <span class=keyword>import</span> Variable</span><br><span class=line><span class=keyword>import</span> torch.nn.functional <span class=keyword>as</span> F</span><br><span class=line><span class=keyword>import</span> time</span><br><span class=line><span class=keyword>import</span> matplotlib.pyplot <span class=keyword>as</span> plt</span><br><span class=line>time_list = []</span><br><span class=line>bw_time_list = []</span><br><span class=line>fwd_time_list = []</span><br><span class=line>ratio_list = []</span><br><span class=line></span><br><span class=line><span class=keyword>for</span> n <span class=keyword>in</span> (<span class=number>10000</span>,<span class=number>20000</span>,<span class=number>30000</span>,<span class=number>40000</span>,<span class=number>50000</span>,<span class=number>60000</span>,<span class=number>70000</span>,<span class=number>80000</span>,<span class=number>90000</span>,<span class=number>100000</span>):</span><br><span class=line>    n = n // <span class=number>100</span></span><br><span class=line>    emb = torch.rand((n, <span class=number>256</span>))</span><br><span class=line>    emb = Variable(emb, requires_grad=<span class=literal>True</span>)</span><br><span class=line>    inputs = torch.randint(<span class=number>0</span>, n, (<span class=number>10000</span>,))</span><br><span class=line>    label = torch.rand((<span class=number>10000</span>, <span class=number>256</span>))</span><br><span class=line>    inputs_onehot = Variable(F.one_hot(inputs, num_classes=n).<span class=built_in>float</span>(), requires_grad=<span class=literal>False</span>)</span><br><span class=line></span><br><span class=line>    begin = time.time()</span><br><span class=line>    bw_time = <span class=number>0</span></span><br><span class=line>    fwd_time = <span class=number>0</span></span><br><span class=line>    <span class=keyword>for</span> i <span class=keyword>in</span> <span class=built_in>range</span>(<span class=number>100</span>):</span><br><span class=line>        begin_fwd = time.time()</span><br><span class=line>        pred = torch.matmul(inputs_onehot, emb)</span><br><span class=line>        end_fwd = time.time()</span><br><span class=line>        fwd_time += end_fwd - begin_fwd</span><br><span class=line>        </span><br><span class=line>        loss = (pred-label).mean()</span><br><span class=line>        begin_bw = time.time()</span><br><span class=line>        loss.backward()</span><br><span class=line>        end_bw = time.time()</span><br><span class=line>        bw_time += end_bw - begin_bw</span><br><span class=line>    end = time.time()</span><br><span class=line>    <span class=built_in>print</span>(<span class=string>"n={}, time={}, bw_time={:.4f}, fwd_time={:.4f}, bwd_time/fwd_time={:.4f}"</span>.<span class=built_in>format</span>(</span><br><span class=line>        n, end-begin, bw_time, fwd_time, bw_time/fwd_time</span><br><span class=line>    ))</span><br><span class=line>    time_list.append(end-begin)</span><br><span class=line>    bw_time_list.append(bw_time)</span><br><span class=line>    fwd_time_list.append(fwd_time)</span><br><span class=line>    ratio_list.append(bw_time/fwd_time)</span><br><span class=line>plt.plot(time_list, color=<span class=string>'r'</span>,label=<span class=string>'Total Time'</span>)</span><br><span class=line>plt.plot(bw_time_list, color=<span class=string>'b'</span>,label=<span class=string>'Backward time'</span>)</span><br><span class=line>plt.plot(fwd_time_list, color=<span class=string>'g'</span>,label=<span class=string>'Forward time'</span>)</span><br><span class=line>plt.legend()</span><br></pre></table></figure><h2 id=code-b.-采用查表的方式进行embedding的耗时试验>Code B. 采用查表的方式进行Embedding的耗时试验</h2><figure class="highlight python"><table><tr><td class=gutter><pre><span class=line>1</span><br><span class=line>2</span><br><span class=line>3</span><br><span class=line>4</span><br><span class=line>5</span><br><span class=line>6</span><br><span class=line>7</span><br><span class=line>8</span><br><span class=line>9</span><br><span class=line>10</span><br><span class=line>11</span><br><span class=line>12</span><br><span class=line>13</span><br><span class=line>14</span><br><span class=line>15</span><br><span class=line>16</span><br><span class=line>17</span><br><span class=line>18</span><br><span class=line>19</span><br><span class=line>20</span><br><span class=line>21</span><br><span class=line>22</span><br><span class=line>23</span><br><span class=line>24</span><br><span class=line>25</span><br><span class=line>26</span><br><span class=line>27</span><br><span class=line>28</span><br><span class=line>29</span><br><span class=line>30</span><br><span class=line>31</span><br><span class=line>32</span><br><span class=line>33</span><br><span class=line>34</span><br><span class=line>35</span><br><span class=line>36</span><br><span class=line>37</span><br><span class=line>38</span><br><span class=line>39</span><br><span class=line>40</span><br><span class=line>41</span><br></pre><td class=code><pre><span class=line><span class=keyword>import</span> torch </span><br><span class=line><span class=keyword>import</span> torch.nn <span class=keyword>as</span> nn</span><br><span class=line><span class=keyword>from</span> torch.autograd <span class=keyword>import</span> Variable</span><br><span class=line><span class=keyword>import</span> torch.nn.functional <span class=keyword>as</span> F</span><br><span class=line><span class=keyword>import</span> time</span><br><span class=line><span class=keyword>import</span> matplotlib.pyplot <span class=keyword>as</span> plt</span><br><span class=line>time_list = []</span><br><span class=line>bw_time_list = []</span><br><span class=line>fwd_time_list = []</span><br><span class=line>ratio_list = []</span><br><span class=line></span><br><span class=line><span class=keyword>for</span> n <span class=keyword>in</span> (<span class=number>10000</span>,<span class=number>20000</span>,<span class=number>30000</span>,<span class=number>40000</span>,<span class=number>50000</span>,<span class=number>60000</span>,<span class=number>70000</span>,<span class=number>80000</span>,<span class=number>90000</span>,<span class=number>100000</span>):</span><br><span class=line>    emb = nn.Embedding(n, <span class=number>256</span>)</span><br><span class=line>    inputs = torch.randint(<span class=number>0</span>, n, (<span class=number>10000</span>,))</span><br><span class=line>    label = torch.rand((<span class=number>10000</span>, <span class=number>256</span>))</span><br><span class=line>    begin = time.time()</span><br><span class=line>    bw_time = <span class=number>0</span></span><br><span class=line>    fwd_time = <span class=number>0</span></span><br><span class=line>    <span class=keyword>for</span> i <span class=keyword>in</span> <span class=built_in>range</span>(<span class=number>100</span>):</span><br><span class=line>        begin_fwd = time.time()</span><br><span class=line>        pred = emb(inputs)</span><br><span class=line>        end_fwd = time.time()</span><br><span class=line>        fwd_time += end_fwd - begin_fwd</span><br><span class=line>        </span><br><span class=line>        loss = (pred-label).mean()</span><br><span class=line>        begin_bw = time.time()</span><br><span class=line>        loss.backward()</span><br><span class=line>        end_bw = time.time()</span><br><span class=line>        bw_time += end_bw - begin_bw</span><br><span class=line>    end = time.time()</span><br><span class=line>    <span class=built_in>print</span>(<span class=string>"n={}, time={}, bw_time={}, fwd_time={}, bwd_time/fwd_time={}"</span>.<span class=built_in>format</span>(</span><br><span class=line>        n, end-begin, bw_time, fwd_time, bw_time/fwd_time</span><br><span class=line>    ))</span><br><span class=line>    time_list.append(end-begin)</span><br><span class=line>    bw_time_list.append(bw_time)</span><br><span class=line>    fwd_time_list.append(fwd_time)</span><br><span class=line>    ratio_list.append(bw_time/fwd_time)</span><br><span class=line>plt.plot(time_list, color=<span class=string>'r'</span>,label=<span class=string>'Total Time'</span>)</span><br><span class=line>plt.plot(bw_time_list, color=<span class=string>'b'</span>,label=<span class=string>'Backward time'</span>)</span><br><span class=line>plt.plot(fwd_time_list, color=<span class=string>'g'</span>,label=<span class=string>'Forward time'</span>)</span><br><span class=line>plt.legend()</span><br></pre></table></figure><h2 id=code-c.-采用稀疏梯度之后的耗时试验>Code C. 采用稀疏梯度之后的耗时试验</h2><figure class="highlight python"><table><tr><td class=gutter><pre><span class=line>1</span><br><span class=line>2</span><br><span class=line>3</span><br><span class=line>4</span><br><span class=line>5</span><br><span class=line>6</span><br><span class=line>7</span><br><span class=line>8</span><br><span class=line>9</span><br><span class=line>10</span><br><span class=line>11</span><br><span class=line>12</span><br><span class=line>13</span><br><span class=line>14</span><br><span class=line>15</span><br><span class=line>16</span><br><span class=line>17</span><br><span class=line>18</span><br><span class=line>19</span><br><span class=line>20</span><br><span class=line>21</span><br><span class=line>22</span><br><span class=line>23</span><br><span class=line>24</span><br><span class=line>25</span><br><span class=line>26</span><br><span class=line>27</span><br><span class=line>28</span><br><span class=line>29</span><br><span class=line>30</span><br><span class=line>31</span><br><span class=line>32</span><br><span class=line>33</span><br><span class=line>34</span><br><span class=line>35</span><br><span class=line>36</span><br><span class=line>37</span><br><span class=line>38</span><br><span class=line>39</span><br><span class=line>40</span><br><span class=line>41</span><br></pre><td class=code><pre><span class=line><span class=keyword>import</span> torch </span><br><span class=line><span class=keyword>import</span> torch.nn <span class=keyword>as</span> nn</span><br><span class=line><span class=keyword>from</span> torch.autograd <span class=keyword>import</span> Variable</span><br><span class=line><span class=keyword>import</span> torch.nn.functional <span class=keyword>as</span> F</span><br><span class=line><span class=keyword>import</span> time</span><br><span class=line><span class=keyword>import</span> matplotlib.pyplot <span class=keyword>as</span> plt</span><br><span class=line>time_list = []</span><br><span class=line>bw_time_list = []</span><br><span class=line>fwd_time_list = []</span><br><span class=line>ratio_list = []</span><br><span class=line></span><br><span class=line><span class=keyword>for</span> n <span class=keyword>in</span> (<span class=number>10000</span>,<span class=number>20000</span>,<span class=number>30000</span>,<span class=number>40000</span>,<span class=number>50000</span>,<span class=number>60000</span>,<span class=number>70000</span>,<span class=number>80000</span>,<span class=number>90000</span>,<span class=number>100000</span>):</span><br><span class=line>    emb = nn.Embedding(n, <span class=number>256</span>, sparse=<span class=literal>True</span>)</span><br><span class=line>    inputs = torch.randint(<span class=number>0</span>, n, (<span class=number>10000</span>,))</span><br><span class=line>    label = torch.rand((<span class=number>10000</span>, <span class=number>256</span>))</span><br><span class=line>    begin = time.time()</span><br><span class=line>    bw_time = <span class=number>0</span></span><br><span class=line>    fwd_time = <span class=number>0</span></span><br><span class=line>    <span class=keyword>for</span> i <span class=keyword>in</span> <span class=built_in>range</span>(<span class=number>100</span>):</span><br><span class=line>        begin_fwd = time.time()</span><br><span class=line>        pred = emb(inputs)</span><br><span class=line>        end_fwd = time.time()</span><br><span class=line>        fwd_time += end_fwd - begin_fwd</span><br><span class=line>        </span><br><span class=line>        loss = (pred-label).mean()</span><br><span class=line>        begin_bw = time.time()</span><br><span class=line>        loss.backward()</span><br><span class=line>        end_bw = time.time()</span><br><span class=line>        bw_time += end_bw - begin_bw</span><br><span class=line>    end = time.time()</span><br><span class=line>    <span class=built_in>print</span>(<span class=string>"n={}, time={}, bw_time={:.4f}, fwd_time={:.4f}, bwd_time/fwd_time={:.4f}"</span>.<span class=built_in>format</span>(</span><br><span class=line>        n, end-begin, bw_time, fwd_time, bw_time/fwd_time</span><br><span class=line>    ))</span><br><span class=line>    time_list.append(end-begin)</span><br><span class=line>    bw_time_list.append(bw_time)</span><br><span class=line>    fwd_time_list.append(fwd_time)</span><br><span class=line>    ratio_list.append(bw_time/fwd_time)</span><br><span class=line>plt.plot(time_list, color=<span class=string>'r'</span>,label=<span class=string>'Total Time'</span>)</span><br><span class=line>plt.plot(bw_time_list, color=<span class=string>'b'</span>,label=<span class=string>'Backward time'</span>)</span><br><span class=line>plt.plot(fwd_time_list, color=<span class=string>'g'</span>,label=<span class=string>'Forward time'</span>)</span><br><span class=line>plt.legend()</span><br></pre></table></figure></div><div><ul class=post-copyright><li class=post-copyright-author><strong>Post author:</strong> FesianXu<li class=post-copyright-link><strong>Post link:</strong> <a href=https://fesianxu.github.io/2022/12/23/embedding-implement-fc-lookup-20221223/ title=【Debug危机系列】Embedding层的千层套路>https://fesianxu.github.io/2022/12/23/embedding-implement-fc-lookup-20221223/</a><li class=post-copyright-license><strong>Copyright Notice: </strong> All articles in this blog are licensed under <a rel="external nofollow" href=https://creativecommons.org/licenses/by-nc-sa/3.0/ target=_blank>CC BY-NC-SA 3.0</a> unless stating additionally.</ul></div><footer class=post-footer><div class=post-tags><a href=/tags/Debug%E5%8D%B1%E6%9C%BA%E7%B3%BB%E5%88%97/ rel=tag># Debug危机系列</a><a href=/tags/paddle/ rel=tag># paddle</a></div><div class=post-nav><div class="post-nav-next post-nav-item"><a href=/2022/12/23/distributed-training-with-recompute-20221223/ rel=next title=浅论分布式训练中的recompute机制> <i class="fa fa-chevron-left"></i> 浅论分布式训练中的recompute机制 </a></div><span class=post-nav-divider></span><div class="post-nav-prev post-nav-item"><a title="hinge loss的一种实现方法" href=/2022/12/23/hinge-loss-implement-20221223/ rel=prev> hinge loss的一种实现方法 <i class="fa fa-chevron-right"></i> </a></div></div></footer></div></article><div class=post-spread></div></div></div></div><div class=sidebar-toggle><div class=sidebar-toggle-line-wrap><span class="sidebar-toggle-line sidebar-toggle-line-first"></span><span class="sidebar-toggle-line sidebar-toggle-line-middle"></span><span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside class=sidebar id=sidebar><div class=sidebar-inner><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target=post-toc-wrap>Table of Contents<li class=sidebar-nav-overview data-target=site-overview-wrap>Overview</ul><section class="site-overview-wrap sidebar-panel"><div class=site-overview><div class="site-author motion-element" itemprop=author itemscope itemtype=http://schema.org/Person><img alt class=site-author-image itemprop=image src=/%5Bobject%20Object%5D><p class=site-author-name itemprop=name><p class="site-description motion-element" itemprop=description></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href=/archives/%7C%7C%20archive> <span class=site-state-item-count>10</span> <span class=site-state-item-name>posts</span> </a></div><div class="site-state-item site-state-categories"><span class=site-state-item-count>7</span><span class=site-state-item-name>categories</span></div><div class="site-state-item site-state-tags"><a href=/tags/index.html> <span class=site-state-item-count>29</span> <span class=site-state-item-name>tags</span> </a></div></nav><div class="links-of-author motion-element"><span class=links-of-author-item> <a href=https://github.com/FesianXu target=_blank title=GitHub> <i class="fa fa-fw fa-github"></i>GitHub</a> </span><span class=links-of-author-item> <a href=mailto:FesianXu@gmail.com target=_blank title=E-Mail> <i class="fa fa-fw fa-envelope"></i>E-Mail</a> </span><span class=links-of-author-item> <a href=https://stackoverflow.com/users/7348519/fesianxu target=_blank title=StackOverflow> <i class="fa fa-fw fa-stack-overflow"></i>StackOverflow</a> </span></div></div></section><!--noindex--><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class=post-toc><div class=post-toc-content><ol class=nav><li class="nav-item nav-level-1"><a class=nav-link href=#%E5%89%8D%E8%A8%80><span class=nav-number>1.</span> <span class=nav-text>前言</span></a><li class="nav-item nav-level-1"><a class=nav-link href=#appendix><span class=nav-number>2.</span> <span class=nav-text>Appendix</span></a><ol class=nav-child><li class="nav-item nav-level-2"><a class=nav-link href=#code-a.-%E9%87%87%E7%94%A8fc%E5%B1%82%E8%BF%9B%E8%A1%8Cembedding%E7%9A%84%E8%80%97%E6%97%B6%E8%AF%95%E9%AA%8C><span class=nav-number>2.1.</span> <span class=nav-text>Code A. 采用FC层进行Embedding的耗时试验</span></a><li class="nav-item nav-level-2"><a class=nav-link href=#code-b.-%E9%87%87%E7%94%A8%E6%9F%A5%E8%A1%A8%E7%9A%84%E6%96%B9%E5%BC%8F%E8%BF%9B%E8%A1%8Cembedding%E7%9A%84%E8%80%97%E6%97%B6%E8%AF%95%E9%AA%8C><span class=nav-number>2.2.</span> <span class=nav-text>Code B. 采用查表的方式进行Embedding的耗时试验</span></a><li class="nav-item nav-level-2"><a class=nav-link href=#code-c.-%E9%87%87%E7%94%A8%E7%A8%80%E7%96%8F%E6%A2%AF%E5%BA%A6%E4%B9%8B%E5%90%8E%E7%9A%84%E8%80%97%E6%97%B6%E8%AF%95%E9%AA%8C><span class=nav-number>2.3.</span> <span class=nav-text>Code C. 采用稀疏梯度之后的耗时试验</span></a></ol></ol></div></div></section><!--/noindex--></div></aside></div></main><footer class=footer id=footer><div class=footer-inner><div class=copyright>© <span itemprop=copyrightYear>2022</span><span class=with-love> <i class="fa fa-user"></i> </span><span class=author itemprop=copyrightHolder>FesianXu</span></div></div></footer><div class=back-to-top><i class="fa fa-arrow-up"></i></div></div><script>if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }</script><script src=/lib/jquery/index.js></script><script src=/lib/fastclick/lib/fastclick.min.js></script><script src=/lib/jquery_lazyload/jquery.lazyload.js></script><script src=/lib/velocity/velocity.min.js></script><script src=/lib/velocity/velocity.ui.min.js></script><script src=/lib/fancybox/source/jquery.fancybox.pack.js></script><script src=/js/src/utils.js></script><script src=/js/src/motion.js></script><script src=/js/src/scrollspy.js></script><script src=/js/src/post-details.js></script><script src=/js/src/bootstrap.js></script><script>// Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });</script><script src=/live2dw/lib/L2Dwidget.min.js></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script>

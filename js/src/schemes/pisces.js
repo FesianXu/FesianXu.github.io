@@ -1,0 +1,3 @@
+$(document).ready((function(){var e=$(".sidebar-inner");function t(){var t=$(".header-inner").height()+CONFIG.sidebar.offset,i=function(){var e=$(".footer-inner"),t=e.outerHeight(!0)-e.outerHeight(),i=e.outerHeight(!0)+t;return i}();
+// Not affix if sidebar taller then content (to prevent bottom jumping).
+t+($("#sidebar").height()+NexT.utils.getSidebarb2tHeight())<$("#content").height()&&e.affix({offset:{top:t-CONFIG.sidebar.offset,bottom:i}}),function(e){return $("#sidebar").css({"margin-top":e})}(t).css({"margin-left":"initial"})}t(),window.matchMedia("(min-width: 991px)").addListener((function(i){i.matches&&($(window).off(".affix"),e.removeData("bs.affix").removeClass("affix affix-top affix-bottom"),t())}))}));
