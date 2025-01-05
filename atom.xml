@@ -6,7 +6,7 @@
   <link href="https://fesianxu.github.io/atom.xml" rel="self"/>
   
   <link href="https://fesianxu.github.io/"/>
-  <updated>2024-12-21T08:11:18.576Z</updated>
+  <updated>2025-01-05T15:36:27.043Z</updated>
   <id>https://fesianxu.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>DoReMi——一种通过代理模型估计大模型预训练最佳数据配比的方法</title>
+    <link href="https://fesianxu.github.io/2025/01/05/doremi-llm-pretrain-20250105/"/>
+    <id>https://fesianxu.github.io/2025/01/05/doremi-llm-pretrain-20250105/</id>
+    <published>2025-01-05T15:31:00.000Z</published>
+    <updated>2025-01-05T15:36:27.043Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;LLM的预训练是决定其底座能力的至关重要的步骤，其预训练数据通常会包含有多种领域的数据，如何调整不同领域的数据配比（可以理解为采样频率）是极其重要的大模型预训练研究点...&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="大模型预训练" scheme="https://fesianxu.github.io/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%A2%84%E8%AE%AD%E7%BB%83/"/>
+    
+    
+    <category term="LLM预训练数据配比" scheme="https://fesianxu.github.io/tags/LLM%E9%A2%84%E8%AE%AD%E7%BB%83%E6%95%B0%E6%8D%AE%E9%85%8D%E6%AF%94/"/>
+    
+    <category term="大模型预训练" scheme="https://fesianxu.github.io/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%A2%84%E8%AE%AD%E7%BB%83/"/>
+    
+    <category term="代理模型" scheme="https://fesianxu.github.io/tags/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%9E%8B/"/>
+    
+    <category term="最佳数据配比" scheme="https://fesianxu.github.io/tags/%E6%9C%80%E4%BD%B3%E6%95%B0%E6%8D%AE%E9%85%8D%E6%AF%94/"/>
+    
+  </entry>
   
   <entry>
     <title>基于shell的简单好用多进程wrapper</title>
@@ -245,7 +270,7 @@ MLLM）中，视觉特征就像是人的眼睛，而底座的LLM则像是人的�
     <link href="https://fesianxu.github.io/2024/09/08/sigmoid-language-image-pretrain-20240908/"/>
     <id>https://fesianxu.github.io/2024/09/08/sigmoid-language-image-pretrain-20240908/</id>
     <published>2024-09-08T13:57:57.000Z</published>
-    <updated>2024-09-08T14:11:03.110Z</updated>
+    <updated>2025-01-05T15:38:05.972Z</updated>
     
     
     <summary type="html">&lt;p&gt;CLIP中的infoNCE损失是一种对比性损失，在SigLIP这个工作中，作者提出采用非对比性的sigmoid损失，能够&lt;strong&gt;更高效地&lt;/strong&gt;进行图文预训练...&lt;/p&gt;</summary>
@@ -477,31 +502,6 @@ LLM）看似要带来新一番人工智能变革浪潮之际，越来越多尝�
     <category term="多模态融合" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E8%9E%8D%E5%90%88/"/>
     
     <category term="大语言模型" scheme="https://fesianxu.github.io/tags/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【论文极速读】 指令微调BLIP, 一种对指令微调敏感的Q-Former设计</title>
-    <link href="https://fesianxu.github.io/2024/06/08/instruct-blip-20240608/"/>
-    <id>https://fesianxu.github.io/2024/06/08/instruct-blip-20240608/</id>
-    <published>2024-06-08T08:29:46.000Z</published>
-    <updated>2024-06-08T08:53:35.698Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;之前笔者在[1]中曾经介绍过BLIP2，其采用Q-Former的方式融合了多模态视觉信息和LLM，本文作者想要简单介绍一个在BLIP2的基础上进一步加强了图文指令微调能力的工作——InstructBLIP，希望对诸位读者有所帮助。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="多模态大模型" scheme="https://fesianxu.github.io/categories/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
-    
-    
-    <category term="多模态大模型" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
-    
-    <category term="多模态融合" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E8%9E%8D%E5%90%88/"/>
-    
-    <category term="多模态" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81/"/>
-    
-    <category term="指令微调" scheme="https://fesianxu.github.io/tags/%E6%8C%87%E4%BB%A4%E5%BE%AE%E8%B0%83/"/>
     
   </entry>
   
