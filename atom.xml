@@ -6,7 +6,7 @@
   <link href="https://fesianxu.github.io/atom.xml" rel="self"/>
   
   <link href="https://fesianxu.github.io/"/>
-  <updated>2025-01-05T15:36:27.043Z</updated>
+  <updated>2025-01-11T03:27:29.363Z</updated>
   <id>https://fesianxu.github.io/</id>
   
   <author>
@@ -17,11 +17,32 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>MeCO——给预训练数据增加源信息,就能减少33%的训练量并且提升效果</title>
+    <link href="https://fesianxu.github.io/2025/01/11/MeCo-20250111/"/>
+    <id>https://fesianxu.github.io/2025/01/11/MeCo-20250111/</id>
+    <published>2025-01-11T03:21:32.000Z</published>
+    <updated>2025-01-11T03:27:29.363Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;最近看到一篇预训练的文章，只在每条预训练数据的前面加上一个源信息（即是该信息的URL信息），就能加速训练（+33%）并且提升下游任务的效果...&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="大模型预训练" scheme="https://fesianxu.github.io/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%A2%84%E8%AE%AD%E7%BB%83/"/>
+    
+    
+    <category term="大模型预训练" scheme="https://fesianxu.github.io/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%A2%84%E8%AE%AD%E7%BB%83/"/>
+    
+    <category term="源信息" scheme="https://fesianxu.github.io/tags/%E6%BA%90%E4%BF%A1%E6%81%AF/"/>
+    
+  </entry>
+  
+  <entry>
     <title>DoReMi——一种通过代理模型估计大模型预训练最佳数据配比的方法</title>
     <link href="https://fesianxu.github.io/2025/01/05/doremi-llm-pretrain-20250105/"/>
     <id>https://fesianxu.github.io/2025/01/05/doremi-llm-pretrain-20250105/</id>
     <published>2025-01-05T15:31:00.000Z</published>
-    <updated>2025-01-05T15:36:27.043Z</updated>
+    <updated>2025-01-05T16:00:50.862Z</updated>
     
     
     <summary type="html">&lt;p&gt;LLM的预训练是决定其底座能力的至关重要的步骤，其预训练数据通常会包含有多种领域的数据，如何调整不同领域的数据配比（可以理解为采样频率）是极其重要的大模型预训练研究点...&lt;/p&gt;</summary>
@@ -31,9 +52,9 @@
     <category term="大模型预训练" scheme="https://fesianxu.github.io/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%A2%84%E8%AE%AD%E7%BB%83/"/>
     
     
-    <category term="LLM预训练数据配比" scheme="https://fesianxu.github.io/tags/LLM%E9%A2%84%E8%AE%AD%E7%BB%83%E6%95%B0%E6%8D%AE%E9%85%8D%E6%AF%94/"/>
-    
     <category term="大模型预训练" scheme="https://fesianxu.github.io/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%A2%84%E8%AE%AD%E7%BB%83/"/>
+    
+    <category term="LLM预训练数据配比" scheme="https://fesianxu.github.io/tags/LLM%E9%A2%84%E8%AE%AD%E7%BB%83%E6%95%B0%E6%8D%AE%E9%85%8D%E6%AF%94/"/>
     
     <category term="代理模型" scheme="https://fesianxu.github.io/tags/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%9E%8B/"/>
     
@@ -270,7 +291,7 @@ MLLM）中，视觉特征就像是人的眼睛，而底座的LLM则像是人的�
     <link href="https://fesianxu.github.io/2024/09/08/sigmoid-language-image-pretrain-20240908/"/>
     <id>https://fesianxu.github.io/2024/09/08/sigmoid-language-image-pretrain-20240908/</id>
     <published>2024-09-08T13:57:57.000Z</published>
-    <updated>2025-01-05T15:38:05.972Z</updated>
+    <updated>2025-01-05T15:38:25.610Z</updated>
     
     
     <summary type="html">&lt;p&gt;CLIP中的infoNCE损失是一种对比性损失，在SigLIP这个工作中，作者提出采用非对比性的sigmoid损失，能够&lt;strong&gt;更高效地&lt;/strong&gt;进行图文预训练...&lt;/p&gt;</summary>
@@ -313,11 +334,11 @@ MLLM）中，视觉特征就像是人的眼睛，而底座的LLM则像是人的�
     
     <category term="论文极速读" scheme="https://fesianxu.github.io/tags/%E8%AE%BA%E6%96%87%E6%9E%81%E9%80%9F%E8%AF%BB/"/>
     
+    <category term="图片搜索" scheme="https://fesianxu.github.io/tags/%E5%9B%BE%E7%89%87%E6%90%9C%E7%B4%A2/"/>
+    
     <category term="多模态检索" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%A3%80%E7%B4%A2/"/>
     
     <category term="视觉稀疏化" scheme="https://fesianxu.github.io/tags/%E8%A7%86%E8%A7%89%E7%A8%80%E7%96%8F%E5%8C%96/"/>
-    
-    <category term="图片搜索" scheme="https://fesianxu.github.io/tags/%E5%9B%BE%E7%89%87%E6%90%9C%E7%B4%A2/"/>
     
     <category term="信息召回（第一阶段检索）" scheme="https://fesianxu.github.io/tags/%E4%BF%A1%E6%81%AF%E5%8F%AC%E5%9B%9E%EF%BC%88%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%E6%A3%80%E7%B4%A2%EF%BC%89/"/>
     
@@ -467,30 +488,6 @@ MLLM），BLIP-2这篇文章利用已经充分训练好的图片编码器和LLM�
     
     <summary type="html">&lt;p&gt;之前笔者在博文中介绍过kosmos-1模型
 [1]，该模型脱胎于MetaLM采用『因果语言模型作为通用任务接口』的思想，采用了多种形式的多模态数据进行训练得到。而在本文将要介绍的kosmos-2中，作者则尝试引入了基准（grounding）和指代（referring）能力，使得多模态大语言模型的人机交互形式更加友好、灵活和多样。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="多模态大模型" scheme="https://fesianxu.github.io/categories/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
-    
-    
-    <category term="多模态大模型" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
-    
-    <category term="多模态融合" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E8%9E%8D%E5%90%88/"/>
-    
-    <category term="大语言模型" scheme="https://fesianxu.github.io/tags/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Kosmos-1, 通用接口架构下的多模态大语言模型</title>
-    <link href="https://fesianxu.github.io/2024/06/08/kosmos-v1-20240608/"/>
-    <id>https://fesianxu.github.io/2024/06/08/kosmos-v1-20240608/</id>
-    <published>2024-06-08T09:10:55.000Z</published>
-    <updated>2024-06-08T09:17:06.586Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;在大规模语言模型（Large Language Model,
-LLM）看似要带来新一番人工智能变革浪潮之际，越来越多尝试以LLM作为通用接口去融入各种任务的工作，之前我们在[2]中曾经对其进行过简单介绍，比如尝试用LLM去控制浏览器、搜索引擎甚至是机械臂等。本文介绍的工作kosmos-1是LLM与多模态信号结合的一种尝试，对笔者有所启发，在此给大家进行推荐。&lt;/p&gt;</summary>
     
     
     
