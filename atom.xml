@@ -6,7 +6,7 @@
   <link href="https://fesianxu.github.io/atom.xml" rel="self"/>
   
   <link href="https://fesianxu.github.io/"/>
-  <updated>2025-02-09T01:52:13.122Z</updated>
+  <updated>2025-02-09T14:53:54.386Z</updated>
   <id>https://fesianxu.github.io/</id>
   
   <author>
@@ -17,11 +17,59 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>世界多胞体与世界模型</title>
+    <link href="https://fesianxu.github.io/2025/02/09/world-model-polytope/"/>
+    <id>https://fesianxu.github.io/2025/02/09/world-model-polytope/</id>
+    <published>2025-02-09T14:51:58.000Z</published>
+    <updated>2025-02-09T14:53:54.386Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;本文记一下我的一个胡思乱想，也不知道有没有现有的论文去研究这个东西，有空我去看看...&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="世界模型" scheme="https://fesianxu.github.io/categories/%E4%B8%96%E7%95%8C%E6%A8%A1%E5%9E%8B/"/>
+    
+    
+    <category term="世界模型" scheme="https://fesianxu.github.io/tags/%E4%B8%96%E7%95%8C%E6%A8%A1%E5%9E%8B/"/>
+    
+    <category term="世界多胞体" scheme="https://fesianxu.github.io/tags/%E4%B8%96%E7%95%8C%E5%A4%9A%E8%83%9E%E4%BD%93/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>从一个例子开始，理解互联网岗位分工</title>
+    <link href="https://fesianxu.github.io/2025/02/09/internet-work-20250209/"/>
+    <id>https://fesianxu.github.io/2025/02/09/internet-work-20250209/</id>
+    <published>2025-02-09T14:47:38.000Z</published>
+    <updated>2025-02-09T14:51:23.920Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;你我皆牛马，活在网中间~&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="互联网趣闻" scheme="https://fesianxu.github.io/categories/%E4%BA%92%E8%81%94%E7%BD%91%E8%B6%A3%E9%97%BB/"/>
+    
+    
+    <category term="互联网工作" scheme="https://fesianxu.github.io/tags/%E4%BA%92%E8%81%94%E7%BD%91%E5%B7%A5%E4%BD%9C/"/>
+    
+    <category term="大厂" scheme="https://fesianxu.github.io/tags/%E5%A4%A7%E5%8E%82/"/>
+    
+    <category term="岗位分工" scheme="https://fesianxu.github.io/tags/%E5%B2%97%E4%BD%8D%E5%88%86%E5%B7%A5/"/>
+    
+    <category term="产品设计" scheme="https://fesianxu.github.io/tags/%E4%BA%A7%E5%93%81%E8%AE%BE%E8%AE%A1/"/>
+    
+    <category term="见闻录" scheme="https://fesianxu.github.io/tags/%E8%A7%81%E9%97%BB%E5%BD%95/"/>
+    
+  </entry>
+  
+  <entry>
     <title>奖励模型中的尺度扩展定律和奖励劫持</title>
     <link href="https://fesianxu.github.io/2025/02/09/scaling-law-in-reward-model-20250209/"/>
     <id>https://fesianxu.github.io/2025/02/09/scaling-law-in-reward-model-20250209/</id>
     <published>2025-02-09T01:18:49.000Z</published>
-    <updated>2025-02-09T01:52:13.122Z</updated>
+    <updated>2025-02-09T02:00:29.741Z</updated>
     
     
     <summary type="html">&lt;p&gt;奖励模型（Reward Model）中的尺度扩展规律（Scaling
@@ -358,17 +406,17 @@ MLLM）中，视觉特征就像是人的眼睛，而底座的LLM则像是人的�
     <category term="多模态检索" scheme="https://fesianxu.github.io/categories/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%A3%80%E7%B4%A2/"/>
     
     
+    <category term="对比学习" scheme="https://fesianxu.github.io/tags/%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/"/>
+    
+    <category term="论文极速读" scheme="https://fesianxu.github.io/tags/%E8%AE%BA%E6%96%87%E6%9E%81%E9%80%9F%E8%AF%BB/"/>
+    
+    <category term="图片搜索" scheme="https://fesianxu.github.io/tags/%E5%9B%BE%E7%89%87%E6%90%9C%E7%B4%A2/"/>
+    
     <category term="多模态检索" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%A3%80%E7%B4%A2/"/>
     
     <category term="视觉稀疏化" scheme="https://fesianxu.github.io/tags/%E8%A7%86%E8%A7%89%E7%A8%80%E7%96%8F%E5%8C%96/"/>
     
-    <category term="图片搜索" scheme="https://fesianxu.github.io/tags/%E5%9B%BE%E7%89%87%E6%90%9C%E7%B4%A2/"/>
-    
     <category term="信息召回（第一阶段检索）" scheme="https://fesianxu.github.io/tags/%E4%BF%A1%E6%81%AF%E5%8F%AC%E5%9B%9E%EF%BC%88%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%E6%A3%80%E7%B4%A2%EF%BC%89/"/>
-    
-    <category term="对比学习" scheme="https://fesianxu.github.io/tags/%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/"/>
-    
-    <category term="论文极速读" scheme="https://fesianxu.github.io/tags/%E8%AE%BA%E6%96%87%E6%9E%81%E9%80%9F%E8%AF%BB/"/>
     
   </entry>
   
@@ -414,15 +462,15 @@ MLLM）中，视觉特征就像是人的眼睛，而底座的LLM则像是人的�
     <category term="多模态大模型" scheme="https://fesianxu.github.io/categories/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
     
     
-    <category term="对比学习" scheme="https://fesianxu.github.io/tags/%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/"/>
-    
-    <category term="论文极速读" scheme="https://fesianxu.github.io/tags/%E8%AE%BA%E6%96%87%E6%9E%81%E9%80%9F%E8%AF%BB/"/>
-    
     <category term="多模态大模型" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
+    
+    <category term="对比学习" scheme="https://fesianxu.github.io/tags/%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/"/>
     
     <category term="CLIP" scheme="https://fesianxu.github.io/tags/CLIP/"/>
     
     <category term="自监督视觉模型" scheme="https://fesianxu.github.io/tags/%E8%87%AA%E7%9B%91%E7%9D%A3%E8%A7%86%E8%A7%89%E6%A8%A1%E5%9E%8B/"/>
+    
+    <category term="论文极速读" scheme="https://fesianxu.github.io/tags/%E8%AE%BA%E6%96%87%E6%9E%81%E9%80%9F%E8%AF%BB/"/>
     
   </entry>
   
@@ -450,59 +498,6 @@ MLLM）中，视觉特征就像是人的眼睛，而底座的LLM则像是人的�
     <category term="多模态语义对齐" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E8%AF%AD%E4%B9%89%E5%AF%B9%E9%BD%90/"/>
     
     <category term="多模态信息融合" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E4%BF%A1%E6%81%AF%E8%9E%8D%E5%90%88/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>BLIP2——采用Q-Former融合视觉语义与LLM能力的方法</title>
-    <link href="https://fesianxu.github.io/2024/06/12/blip2-20240612/"/>
-    <id>https://fesianxu.github.io/2024/06/12/blip2-20240612/</id>
-    <published>2024-06-11T16:29:10.000Z</published>
-    <updated>2024-06-11T16:34:26.669Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;大规模语言模型（Large Language
-Model,LLM）是当前的当红炸子鸡，展现出了强大的逻辑推理，语义理解能力，而视觉作为人类最为主要的感知世界的手段，亟待和LLM进行融合，形成多模态大规模语言模型（Multimodal
-LLM,
-MLLM），BLIP-2这篇文章利用已经充分训练好的图片编码器和LLM模型，通过Q-Former巧妙地融合在一起，在引入少量待学习参数的同时，取得了显著的效果。本文将对BLIP2进行笔记和笔者个人感想纪录，希望对诸位读者有所帮助。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="多模态大模型" scheme="https://fesianxu.github.io/categories/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
-    
-    
-    <category term="多模态大模型" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
-    
-    <category term="多模态融合" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E8%9E%8D%E5%90%88/"/>
-    
-    <category term="大语言模型" scheme="https://fesianxu.github.io/tags/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【论文极速读】MetaLM, 一种融合因果语言模型和非因果语言模型的方法</title>
-    <link href="https://fesianxu.github.io/2024/06/08/metalm-20240608/"/>
-    <id>https://fesianxu.github.io/2024/06/08/metalm-20240608/</id>
-    <published>2024-06-08T09:11:25.000Z</published>
-    <updated>2024-06-08T09:32:29.854Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;熟悉笔者的读者想必都知道，最近我在恶补一些经典的LLM工作，之前也精读过MetaLM这个工作但是没有及时笔记，现在已经有些遗忘了，因此在过年期间复习了下，在此笔记希望对诸位有所帮助。&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="多模态大模型" scheme="https://fesianxu.github.io/categories/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
-    
-    
-    <category term="多模态大模型" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
-    
-    <category term="多模态融合" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E8%9E%8D%E5%90%88/"/>
-    
-    <category term="大语言模型" scheme="https://fesianxu.github.io/tags/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"/>
-    
-    <category term="因果语言模型" scheme="https://fesianxu.github.io/tags/%E5%9B%A0%E6%9E%9C%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"/>
-    
-    <category term="非因果语言模型" scheme="https://fesianxu.github.io/tags/%E9%9D%9E%E5%9B%A0%E6%9E%9C%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"/>
     
   </entry>
   
