@@ -6,7 +6,7 @@
   <link href="https://fesianxu.github.io/atom.xml" rel="self"/>
   
   <link href="https://fesianxu.github.io/"/>
-  <updated>2025-02-09T14:53:54.386Z</updated>
+  <updated>2025-03-02T14:32:30.505Z</updated>
   <id>https://fesianxu.github.io/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>大模型推理时的尺度扩展定律</title>
+    <link href="https://fesianxu.github.io/2025/03/02/test-time-scaling-laws-20250302/"/>
+    <id>https://fesianxu.github.io/2025/03/02/test-time-scaling-laws-20250302/</id>
+    <published>2025-03-02T14:25:12.000Z</published>
+    <updated>2025-03-02T14:32:30.505Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;大模型的尺度扩展定律告诉我们：『LLM的性能会随着模型的参数量、模型的训练量、模型的训练数据量的增加而增加』。训练存在尺度扩展定律，测试也存在尺度扩展定律，实践告诉我们在推理时候增大计算量，往往可以获得模型性能收益。那么在给定了计算预算的前提下，如何安排预算才能达到最好的模型效果呢？&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="大规模语言模型" scheme="https://fesianxu.github.io/categories/%E5%A4%A7%E8%A7%84%E6%A8%A1%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"/>
+    
+    
+    <category term="大语言模型" scheme="https://fesianxu.github.io/tags/%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"/>
+    
+    <category term="测试时尺度扩展" scheme="https://fesianxu.github.io/tags/%E6%B5%8B%E8%AF%95%E6%97%B6%E5%B0%BA%E5%BA%A6%E6%89%A9%E5%B1%95/"/>
+    
+    <category term="Scaling Laws" scheme="https://fesianxu.github.io/tags/Scaling-Laws/"/>
+    
+  </entry>
   
   <entry>
     <title>世界多胞体与世界模型</title>
@@ -410,11 +433,11 @@ MLLM）中，视觉特征就像是人的眼睛，而底座的LLM则像是人的�
     
     <category term="论文极速读" scheme="https://fesianxu.github.io/tags/%E8%AE%BA%E6%96%87%E6%9E%81%E9%80%9F%E8%AF%BB/"/>
     
-    <category term="图片搜索" scheme="https://fesianxu.github.io/tags/%E5%9B%BE%E7%89%87%E6%90%9C%E7%B4%A2/"/>
-    
     <category term="多模态检索" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%A3%80%E7%B4%A2/"/>
     
     <category term="视觉稀疏化" scheme="https://fesianxu.github.io/tags/%E8%A7%86%E8%A7%89%E7%A8%80%E7%96%8F%E5%8C%96/"/>
+    
+    <category term="图片搜索" scheme="https://fesianxu.github.io/tags/%E5%9B%BE%E7%89%87%E6%90%9C%E7%B4%A2/"/>
     
     <category term="信息召回（第一阶段检索）" scheme="https://fesianxu.github.io/tags/%E4%BF%A1%E6%81%AF%E5%8F%AC%E5%9B%9E%EF%BC%88%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%E6%A3%80%E7%B4%A2%EF%BC%89/"/>
     
@@ -471,33 +494,6 @@ MLLM）中，视觉特征就像是人的眼睛，而底座的LLM则像是人的�
     <category term="自监督视觉模型" scheme="https://fesianxu.github.io/tags/%E8%87%AA%E7%9B%91%E7%9D%A3%E8%A7%86%E8%A7%89%E6%A8%A1%E5%9E%8B/"/>
     
     <category term="论文极速读" scheme="https://fesianxu.github.io/tags/%E8%AE%BA%E6%96%87%E6%9E%81%E9%80%9F%E8%AF%BB/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>万字浅析视频搜索系统中的多模态能力建设</title>
-    <link href="https://fesianxu.github.io/2024/06/30/video-retrieval-multimodal-20240630/"/>
-    <id>https://fesianxu.github.io/2024/06/30/video-retrieval-multimodal-20240630/</id>
-    <published>2024-06-30T13:36:32.000Z</published>
-    <updated>2024-06-30T14:44:13.928Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;视频搜索是天然的富媒体检索场景，视觉信息占据了视频的一大部分信息量，在视频搜索系统中引入多模态能力，对于提高整个系统的能力天花板至关重要。本文将对在视频搜索系统中落地多模态能力（特别是视觉）进行讨论，同时为了让部分无相关背景的读者补充一些背景知识，笔者将会对典型的搜索系统进行介绍...&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="多模态检索" scheme="https://fesianxu.github.io/categories/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%A3%80%E7%B4%A2/"/>
-    
-    
-    <category term="多模态检索" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%A3%80%E7%B4%A2/"/>
-    
-    <category term="视频搜索" scheme="https://fesianxu.github.io/tags/%E8%A7%86%E9%A2%91%E6%90%9C%E7%B4%A2/"/>
-    
-    <category term="多模态能力落地" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E8%83%BD%E5%8A%9B%E8%90%BD%E5%9C%B0/"/>
-    
-    <category term="多模态语义对齐" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E8%AF%AD%E4%B9%89%E5%AF%B9%E9%BD%90/"/>
-    
-    <category term="多模态信息融合" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E4%BF%A1%E6%81%AF%E8%9E%8D%E5%90%88/"/>
     
   </entry>
   
