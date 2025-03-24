@@ -6,7 +6,7 @@
   <link href="https://fesianxu.github.io/atom.xml" rel="self"/>
   
   <link href="https://fesianxu.github.io/"/>
-  <updated>2025-03-14T00:42:23.467Z</updated>
+  <updated>2025-03-24T16:08:40.718Z</updated>
   <id>https://fesianxu.github.io/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>BoNBoN——结合行为模仿和偏好对齐进行Best-of-N对齐的方法</title>
+    <link href="https://fesianxu.github.io/2025/03/24/bonbon-20250324/"/>
+    <id>https://fesianxu.github.io/2025/03/24/bonbon-20250324/</id>
+    <published>2025-03-24T08:02:11.000Z</published>
+    <updated>2025-03-24T16:08:40.718Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;BoNBoN结合了行为模仿和偏好对齐，在模型的Best-of-N结果基础上进行对齐...&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="大模型" scheme="https://fesianxu.github.io/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
+    
+    
+    <category term="大模型" scheme="https://fesianxu.github.io/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
+    
+    <category term="Best-of-N" scheme="https://fesianxu.github.io/tags/Best-of-N/"/>
+    
+    <category term="偏好对齐" scheme="https://fesianxu.github.io/tags/%E5%81%8F%E5%A5%BD%E5%AF%B9%E9%BD%90/"/>
+    
+    <category term="行为模仿" scheme="https://fesianxu.github.io/tags/%E8%A1%8C%E4%B8%BA%E6%A8%A1%E4%BB%BF/"/>
+    
+  </entry>
   
   <entry>
     <title>给定计算预算下的最佳LLM模型尺寸与预训练数据量分配</title>
@@ -130,13 +155,13 @@ Laws），也即是通过扩展奖励模型的模型大小、数据量等去提�
     
     <category term="大模型" scheme="https://fesianxu.github.io/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
     
+    <category term="偏好对齐" scheme="https://fesianxu.github.io/tags/%E5%81%8F%E5%A5%BD%E5%AF%B9%E9%BD%90/"/>
+    
     <category term="奖励模型" scheme="https://fesianxu.github.io/tags/%E5%A5%96%E5%8A%B1%E6%A8%A1%E5%9E%8B/"/>
     
     <category term="奖励劫持" scheme="https://fesianxu.github.io/tags/%E5%A5%96%E5%8A%B1%E5%8A%AB%E6%8C%81/"/>
     
     <category term="尺度扩展定律" scheme="https://fesianxu.github.io/tags/%E5%B0%BA%E5%BA%A6%E6%89%A9%E5%B1%95%E5%AE%9A%E5%BE%8B/"/>
-    
-    <category term="偏好对齐" scheme="https://fesianxu.github.io/tags/%E5%81%8F%E5%A5%BD%E5%AF%B9%E9%BD%90/"/>
     
   </entry>
   
@@ -465,31 +490,6 @@ MLLM）中，视觉特征就像是人的眼睛，而底座的LLM则像是人的�
     <category term="图片搜索" scheme="https://fesianxu.github.io/tags/%E5%9B%BE%E7%89%87%E6%90%9C%E7%B4%A2/"/>
     
     <category term="信息召回（第一阶段检索）" scheme="https://fesianxu.github.io/tags/%E4%BF%A1%E6%81%AF%E5%8F%AC%E5%9B%9E%EF%BC%88%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%E6%A3%80%E7%B4%A2%EF%BC%89/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>可微分检索索引（Differential Search Index， DSI）</title>
-    <link href="https://fesianxu.github.io/2024/07/14/20240714-differential-search-index/"/>
-    <id>https://fesianxu.github.io/2024/07/14/20240714-differential-search-index/</id>
-    <published>2024-07-14T14:55:16.000Z</published>
-    <updated>2024-07-14T15:19:06.207Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;最近从朋友处得知了DSI这个概念，所谓的可微分检索索引DSI，就是通过语言模型将检索过程中的索引和召回阶段端到端地融合在一起，输入&lt;code&gt;query&lt;/code&gt;模型直接输出&lt;code&gt;docid&lt;/code&gt;，笔者今日抽空看了下原论文，简单笔记下，希望对各位读者有所帮助...&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="检索系统" scheme="https://fesianxu.github.io/categories/%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/"/>
-    
-    
-    <category term="检索系统" scheme="https://fesianxu.github.io/tags/%E6%A3%80%E7%B4%A2%E7%B3%BB%E7%BB%9F/"/>
-    
-    <category term="端到端检索" scheme="https://fesianxu.github.io/tags/%E7%AB%AF%E5%88%B0%E7%AB%AF%E6%A3%80%E7%B4%A2/"/>
-    
-    <category term="DSI" scheme="https://fesianxu.github.io/tags/DSI/"/>
-    
-    <category term="LLM" scheme="https://fesianxu.github.io/tags/LLM/"/>
     
   </entry>
   
