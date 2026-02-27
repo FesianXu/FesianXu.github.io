@@ -6,7 +6,7 @@
   <link href="https://fesianxu.github.io/atom.xml" rel="self"/>
   
   <link href="https://fesianxu.github.io/"/>
-  <updated>2026-01-11T10:02:28.329Z</updated>
+  <updated>2026-02-27T15:33:57.320Z</updated>
   <id>https://fesianxu.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>生成式奖励模型需考虑对齐推理过程</title>
+    <link href="https://fesianxu.github.io/2026/02/27/align-reasoning-of-reward-model-20260227/"/>
+    <id>https://fesianxu.github.io/2026/02/27/align-reasoning-of-reward-model-20260227/</id>
+    <published>2026-02-27T15:25:50.000Z</published>
+    <updated>2026-02-27T15:33:57.320Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;奖励模型的结果精度并非评价其性能的唯一标准，模型得出正确结果的推理过程合理性也需要进行建模优化...&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="大模型" scheme="https://fesianxu.github.io/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
+    
+    
+    <category term="生成式奖励模型" scheme="https://fesianxu.github.io/tags/%E7%94%9F%E6%88%90%E5%BC%8F%E5%A5%96%E5%8A%B1%E6%A8%A1%E5%9E%8B/"/>
+    
+    <category term="奖励模型推理过程对齐" scheme="https://fesianxu.github.io/tags/%E5%A5%96%E5%8A%B1%E6%A8%A1%E5%9E%8B%E6%8E%A8%E7%90%86%E8%BF%87%E7%A8%8B%E5%AF%B9%E9%BD%90/"/>
+    
+    <category term="大模型" scheme="https://fesianxu.github.io/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
+    
+    <category term="大模型后训练" scheme="https://fesianxu.github.io/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%90%8E%E8%AE%AD%E7%BB%83/"/>
+    
+    <category term="奖励模型建模" scheme="https://fesianxu.github.io/tags/%E5%A5%96%E5%8A%B1%E6%A8%A1%E5%9E%8B%E5%BB%BA%E6%A8%A1/"/>
+    
+  </entry>
   
   <entry>
     <title>关系视觉相似度（Relational Visual Similarity）</title>
@@ -86,9 +113,9 @@
     <category term="大模型后训练" scheme="https://fesianxu.github.io/categories/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%90%8E%E8%AE%AD%E7%BB%83/"/>
     
     
-    <category term="偏好对齐" scheme="https://fesianxu.github.io/tags/%E5%81%8F%E5%A5%BD%E5%AF%B9%E9%BD%90/"/>
-    
     <category term="大模型后训练" scheme="https://fesianxu.github.io/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%90%8E%E8%AE%AD%E7%BB%83/"/>
+    
+    <category term="偏好对齐" scheme="https://fesianxu.github.io/tags/%E5%81%8F%E5%A5%BD%E5%AF%B9%E9%BD%90/"/>
     
     <category term="DPO" scheme="https://fesianxu.github.io/tags/DPO/"/>
     
@@ -467,29 +494,6 @@ Rank(LTR)模型是对搜索/计算广告/推荐系统中的排序问题进行模
     <category term="gbrank" scheme="https://fesianxu.github.io/tags/gbrank/"/>
     
     <category term="LTR" scheme="https://fesianxu.github.io/tags/LTR/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【用户行为学研究】 从用户点击数据中构造隐式反馈</title>
-    <link href="https://fesianxu.github.io/2024/10/17/above-skip-20241017/"/>
-    <id>https://fesianxu.github.io/2024/10/17/above-skip-20241017/</id>
-    <published>2024-10-17T15:54:19.000Z</published>
-    <updated>2024-10-17T16:18:42.477Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;笔者在前文[4]中介绍了LTR模型中常用的GBRank模型，在文章末尾提到了根据用户点击数据构造隐式反馈，从而构建出有序对数据进行训练，因而引出了&lt;code&gt;Skip-Above&lt;/code&gt;这个构建隐式反馈的方法，该方法在文章[1]中提出，作者根据翔实的用户行为学实验和分析，得出了包括&lt;code&gt;Skip-Above&lt;/code&gt;在内的一系列通过点击信号来构建隐式反馈的方法...&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="用户行为学" scheme="https://fesianxu.github.io/categories/%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E5%AD%A6/"/>
-    
-    
-    <category term="用户行为学" scheme="https://fesianxu.github.io/tags/%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E5%AD%A6/"/>
-    
-    <category term="隐式反馈" scheme="https://fesianxu.github.io/tags/%E9%9A%90%E5%BC%8F%E5%8F%8D%E9%A6%88/"/>
-    
-    <category term="用户行为分析" scheme="https://fesianxu.github.io/tags/%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E5%88%86%E6%9E%90/"/>
     
   </entry>
   
