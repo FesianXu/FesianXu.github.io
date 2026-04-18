@@ -6,7 +6,7 @@
   <link href="https://fesianxu.github.io/atom.xml" rel="self"/>
   
   <link href="https://fesianxu.github.io/"/>
-  <updated>2026-04-18T15:36:19.670Z</updated>
+  <updated>2026-04-18T15:56:52.402Z</updated>
   <id>https://fesianxu.github.io/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://fesianxu.github.io/2026/04/18/pivot-dpo-in-mllm-20260418/"/>
     <id>https://fesianxu.github.io/2026/04/18/pivot-dpo-in-mllm-20260418/</id>
     <published>2026-04-18T15:22:22.000Z</published>
-    <updated>2026-04-18T15:36:19.670Z</updated>
+    <updated>2026-04-18T15:56:52.402Z</updated>
     
     
     <summary type="html">&lt;p&gt;相较于
@@ -82,9 +82,9 @@ SFT，强化学习能生成更强且更为精确定位的视觉表示，从而�
     <category term="多模态检索" scheme="https://fesianxu.github.io/categories/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%A3%80%E7%B4%A2/"/>
     
     
-    <category term="对比学习" scheme="https://fesianxu.github.io/tags/%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/"/>
-    
     <category term="图片搜索" scheme="https://fesianxu.github.io/tags/%E5%9B%BE%E7%89%87%E6%90%9C%E7%B4%A2/"/>
+    
+    <category term="对比学习" scheme="https://fesianxu.github.io/tags/%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/"/>
     
     <category term="多模态模型" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E6%A8%A1%E5%9E%8B/"/>
     
