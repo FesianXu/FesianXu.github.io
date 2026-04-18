@@ -6,7 +6,7 @@
   <link href="https://fesianxu.github.io/atom.xml" rel="self"/>
   
   <link href="https://fesianxu.github.io/"/>
-  <updated>2026-02-27T15:33:57.320Z</updated>
+  <updated>2026-04-18T15:36:19.670Z</updated>
   <id>https://fesianxu.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>偏好指引下的视觉特征最优化</title>
+    <link href="https://fesianxu.github.io/2026/04/18/pivot-dpo-in-mllm-20260418/"/>
+    <id>https://fesianxu.github.io/2026/04/18/pivot-dpo-in-mllm-20260418/</id>
+    <published>2026-04-18T15:22:22.000Z</published>
+    <updated>2026-04-18T15:36:19.670Z</updated>
+    
+    
+    <summary type="html">&lt;p&gt;相较于
+SFT，强化学习能生成更强且更为精确定位的视觉表示，从而显著提升视觉编码器在多模态语言模型中的表现...&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="多模态大模型" scheme="https://fesianxu.github.io/categories/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
+    
+    
+    <category term="多模态大模型" scheme="https://fesianxu.github.io/tags/%E5%A4%9A%E6%A8%A1%E6%80%81%E5%A4%A7%E6%A8%A1%E5%9E%8B/"/>
+    
+    <category term="视觉表征训练" scheme="https://fesianxu.github.io/tags/%E8%A7%86%E8%A7%89%E8%A1%A8%E5%BE%81%E8%AE%AD%E7%BB%83/"/>
+    
+    <category term="视觉对齐" scheme="https://fesianxu.github.io/tags/%E8%A7%86%E8%A7%89%E5%AF%B9%E9%BD%90/"/>
+    
+  </entry>
   
   <entry>
     <title>生成式奖励模型需考虑对齐推理过程</title>
@@ -470,30 +494,6 @@ Laws），也即是通过扩展奖励模型的模型大小、数据量等去提�
     <category term="视觉连接器" scheme="https://fesianxu.github.io/tags/%E8%A7%86%E8%A7%89%E8%BF%9E%E6%8E%A5%E5%99%A8/"/>
     
     <category term="交织图文训练" scheme="https://fesianxu.github.io/tags/%E4%BA%A4%E7%BB%87%E5%9B%BE%E6%96%87%E8%AE%AD%E7%BB%83/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>搜索系统中的Learning To Rank模型：GBRank</title>
-    <link href="https://fesianxu.github.io/2024/10/18/gbrank-20241018/"/>
-    <id>https://fesianxu.github.io/2024/10/18/gbrank-20241018/</id>
-    <published>2024-10-17T16:06:59.000Z</published>
-    <updated>2024-10-17T16:17:18.424Z</updated>
-    
-    
-    <summary type="html">&lt;p&gt;Learning To
-Rank(LTR)模型是对搜索/计算广告/推荐系统中的排序问题进行模型建模的方法，在当前的搜索系统中有着至关重要的作用...&lt;/p&gt;</summary>
-    
-    
-    
-    <category term="统计机器学习" scheme="https://fesianxu.github.io/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-    
-    
-    <category term="搜索系统" scheme="https://fesianxu.github.io/tags/%E6%90%9C%E7%B4%A2%E7%B3%BB%E7%BB%9F/"/>
-    
-    <category term="gbrank" scheme="https://fesianxu.github.io/tags/gbrank/"/>
-    
-    <category term="LTR" scheme="https://fesianxu.github.io/tags/LTR/"/>
     
   </entry>
   
